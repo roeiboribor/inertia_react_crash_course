@@ -3,8 +3,8 @@ const UserList = ({ users }) => {
         <>
             {users ? (
                 <ul>
-                    {users.map((item) => (
-                        <li>{item.name}</li>
+                    {users.map((item, index) => (
+                        <li key={`list-item-${index}`}>{item.name}</li>
                     ))}
                 </ul>
             ) : (
