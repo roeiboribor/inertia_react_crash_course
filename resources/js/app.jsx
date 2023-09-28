@@ -1,4 +1,4 @@
-import "../css/app.css";
+import "../scss/app.scss";
 
 import { createRoot } from "react-dom/client";
 import { createInertiaApp } from "@inertiajs/react";
@@ -19,6 +19,6 @@ createInertiaApp({
         root.render(<App {...props} />);
     },
     progress: {
-        color: "#4B5563",
+        color: "#32cd32",
     },
 });
