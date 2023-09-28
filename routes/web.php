@@ -37,4 +37,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+/*
+|--------------------------------------------------------------------------
+| ADD CUSTOM ROUTES HERE
+|--------------------------------------------------------------------------
+|
+| Customized routes here
+|
+*/
+Route::middleware('auth')->group(function () {
+    Route::get('/another-page', function () {
+        return inertia('AnotherPage');
+    })->name('another-page');
+});
+
 require __DIR__ . '/auth.php';
