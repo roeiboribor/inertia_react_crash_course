@@ -33,6 +33,7 @@ const Index = ({ auth, users }) => {
     const submit = (e) => {
         e.preventDefault();
         console.log("Submit");
+        reset();
     };
 
     return (
@@ -70,7 +71,7 @@ const Index = ({ auth, users }) => {
             </div>
 
             {/* MODALS HERE */}
-            <Modal show={isOpen} closeable={true} onClose={handleOnCloseModal}>
+            <Modal show={isOpen} closeable={true}>
                 <div className="p-6">
                     <div className="card-title">
                         <h3 className="text-xl font-bold">Add User</h3>
