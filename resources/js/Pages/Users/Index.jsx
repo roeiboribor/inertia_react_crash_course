@@ -18,32 +18,50 @@ import InputError from "@/Components/InputError";
 import { isEmpty } from "@/Utils/helpers/validation";
 import Loader from "@/Components/ui/loaders/Loader";
 
-const Index = ({ auth, users }) => {
+const Index = ({ auth }) => {
     let [isOpen, setIsOpen] = useState(false);
+    let [modalType, setModalType] = useState("");
 
-    const { data, setData, submit, processing, progress, errors, reset } =
-        useForm({
-            id: null,
-            name: "",
-            email: "",
-            password: import.meta.env.VITE_DEFAULT_PASSWORD,
-        });
+    const { users } = usePage().props;
+
+    const {
+        data,
+        setData,
+        setDefaults,
+        submit,
+        processing,
+        progress,
+        errors,
+        clearErrors,
+        reset,
+    } = useForm({
+        id: "",
+        name: "",
+        email: "",
+        password: "",
+    });
 
     const closeModal = () => {
         setIsOpen(false);
-        reset();
+        resetModalForm();
     };
 
     const openModal = () => {
+        // resetModalForm();
         setIsOpen(true);
+    };
+
+    const handleCreateModal = () => {
+        setModalType("create");
+        openModal();
     };
 
     const handleEditModal = async (id) => {
         if (id) {
-            // Get
+            setModalType("edit");
             await axios
                 .get(route("api.users.edit", id))
-                .then(({ data }) => setModelData(data.data))
+                .then(({ data }) => setData({ ...data.data }))
                 .catch((error) => console.log(error));
 
             openModal();
@@ -55,18 +73,36 @@ const Index = ({ auth, users }) => {
         console.log("Delete Modal");
     };
 
-    const setModelData = (items) => {
-        console.log(data);
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        submit("post", route("users.store"), {
-            preserveScroll: true,
-            onSuccess: () => {
-                reset();
-                closeModal();
-            },
+        switch (modalType) {
+            case "create":
+                submit("post", route("users.store"), {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        closeModal();
+                    },
+                });
+                break;
+            case "edit":
+                submit("post", route("users.update"), {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        closeModal();
+                    },
+                });
+                break;
+
+            default:
+                break;
+        }
+    };
+
+    const resetModalForm = () => {
+        clearErrors();
+        reset();
+        setDefaults({
+            password: import.meta.env.VITE_DEFAULT_PASSWORD,
         });
     };
 
@@ -91,7 +127,7 @@ const Index = ({ auth, users }) => {
                                     <Button
                                         type="button"
                                         className="btn-success"
-                                        onClick={openModal}
+                                        onClick={handleCreateModal}
                                     >
                                         <i
                                             x-cloak="true"
@@ -117,7 +153,16 @@ const Index = ({ auth, users }) => {
             <Modal show={isOpen} closeable={true} maxWidth="xl">
                 <form onSubmit={handleSubmit} className="p-6">
                     <div className="card-title relative">
-                        <h3 className="text-xl font-bold">Add User</h3>
+                        <h3 className="text-xl font-bold">
+                            {modalType == "create"
+                                ? "Add"
+                                : modalType == "edit"
+                                ? "Edit"
+                                : modalType == "delete"
+                                ? "delete"
+                                : null}{" "}
+                            User
+                        </h3>
                         <span
                             onClick={closeModal}
                             className="absolute top-0 right-0 cursor-pointer"
@@ -135,6 +180,7 @@ const Index = ({ auth, users }) => {
                                 />
                                 <TextInput
                                     id="name"
+                                    name="name"
                                     value={data.name}
                                     isFocused={true}
                                     onChange={(e) =>
@@ -158,6 +204,7 @@ const Index = ({ auth, users }) => {
                                 <TextInput
                                     id="email"
                                     type="email"
+                                    name="email"
                                     value={data.email}
                                     onChange={(e) =>
                                         setData("email", e.target.value)
@@ -180,11 +227,11 @@ const Index = ({ auth, users }) => {
                             </div>
                             <div className="flex space-x-2">
                                 <Button
-                                    disabled={
-                                        isEmpty(data.name) ||
-                                        isEmpty(data.email) ||
-                                        processing
-                                    }
+                                    // disabled={
+                                    //     isEmpty(data.name) ||
+                                    //     isEmpty(data.email) ||
+                                    //     processing
+                                    // }
                                     type="submit"
                                     className="btn-success"
                                     onClick={handleSubmit}
