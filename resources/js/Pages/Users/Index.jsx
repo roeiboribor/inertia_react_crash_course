@@ -13,27 +13,38 @@ import TextInput from "@/Components/TextInput";
 import InputLabel from "@/Components/InputLabel";
 import InputError from "@/Components/InputError";
 
+// HELPER
+import { isEmpty } from "@/Utils/helpers/validation";
+import Loader from "@/Components/ui/loaders/Loader";
+
 const Index = ({ auth, users }) => {
     let [isOpen, setIsOpen] = useState(false);
 
-    const { data, setData, post, processing, errors, reset } = useForm({
-        name: "",
-        email: "",
-        password: "",
-    });
+    const { data, setData, post, processing, progress, errors, reset } =
+        useForm({
+            name: "",
+            email: "",
+            password: import.meta.env.VITE_DEFAULT_PASSWORD,
+        });
 
     const closeModal = () => {
         setIsOpen(false);
+        reset();
     };
 
     const openModal = () => {
         setIsOpen(true);
     };
 
-    const submit = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Submit");
-        reset();
+        post(route("users.store"), {
+            preserveScroll: true,
+            onSuccess: () => {
+                reset();
+                closeModal();
+            },
+        });
     };
 
     return (
@@ -55,10 +66,15 @@ const Index = ({ auth, users }) => {
                                 <h4 className="text-lg font-bold">User List</h4>
                                 <div>
                                     <Button
+                                        type="button"
                                         className="btn-success"
                                         onClick={openModal}
                                     >
-                                        <i className="bx bx-plus mr-2"></i> ADD
+                                        <i
+                                            x-cloak="true"
+                                            className="bx bx-plus mr-2"
+                                        ></i>{" "}
+                                        ADD
                                     </Button>
                                 </div>
                             </div>
@@ -71,14 +87,20 @@ const Index = ({ auth, users }) => {
             </div>
 
             {/* MODALS HERE */}
-            <Modal show={isOpen} closeable={true}>
-                <div className="p-6">
-                    <div className="card-title">
+            <Modal show={isOpen} closeable={true} maxWidth="xl">
+                <form onSubmit={handleSubmit} className="p-6">
+                    <div className="card-title relative">
                         <h3 className="text-xl font-bold">Add User</h3>
+                        <span
+                            onClick={closeModal}
+                            className="absolute top-0 right-0 cursor-pointer"
+                        >
+                            <i className="bx bx-x text-xl text-red-500 font-semibold"></i>
+                        </span>
                     </div>
                     <div className="card-body py-8">
-                        <form onSubmit={submit}>
-                            <div className="">
+                        <div className="grid grid-cols-12 gap-4">
+                            <div className="col-span-12">
                                 <InputLabel
                                     htmlFor="name"
                                     value="Name"
@@ -93,7 +115,7 @@ const Index = ({ auth, users }) => {
                                         setData("name", e.target.value)
                                     }
                                     className="mt-1 block w-full"
-                                    required
+                                    required={true}
                                     maxLength="255"
                                 />
                                 <InputError
@@ -101,22 +123,60 @@ const Index = ({ auth, users }) => {
                                     className="mt-2"
                                 />
                             </div>
-                        </form>
-                    </div>
-                    <div className="card-footer">
-                        <div className="flex justify-end space-x-2">
-                            <Button className="btn-success" onClick={submit}>
-                                Save
-                            </Button>
-                            <Button
-                                className="btn-secondary"
-                                onClick={closeModal}
-                            >
-                                Cancel
-                            </Button>
+                            <div className="col-span-12">
+                                <InputLabel
+                                    htmlFor="email"
+                                    value="Email"
+                                    required
+                                />
+                                <TextInput
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    value={data.email}
+                                    onChange={(e) =>
+                                        setData("email", e.target.value)
+                                    }
+                                    className="mt-1 block w-full"
+                                    required={true}
+                                    maxLength="255"
+                                />
+                                <InputError
+                                    message={errors.email}
+                                    className="mt-2"
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <div className="card-footer">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <Loader isShow={processing} />
+                            </div>
+                            <div className="flex space-x-2">
+                                <Button
+                                    disabled={
+                                        isEmpty(data.name) ||
+                                        isEmpty(data.email) ||
+                                        processing
+                                    }
+                                    type="submit"
+                                    className="btn-success"
+                                    onClick={handleSubmit}
+                                >
+                                    Save
+                                </Button>
+                                <Button
+                                    type="button"
+                                    className="btn-secondary"
+                                    onClick={closeModal}
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </Modal>
         </AuthenticatedLayout>
     );

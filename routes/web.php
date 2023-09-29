@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Users\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -34,7 +35,7 @@ Route::middleware('auth')->group(function () {
     |
     */
 
-    Route::get('/users', [\App\Http\Controllers\Users\UserController::class, 'index'])->name('users.index');
+    Route::resource('users', UserController::class);
 });
 
 require __DIR__ . '/auth.php';
