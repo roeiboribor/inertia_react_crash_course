@@ -1,7 +1,8 @@
 import { useState } from "react";
+import axios from "axios";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
-import { useForm, Head } from "@inertiajs/react";
+import { usePage, useForm, Head } from "@inertiajs/react";
 
 // UI COMPONENTS
 import Button from "@/Components/ui/buttons/Button";
@@ -20,8 +21,9 @@ import Loader from "@/Components/ui/loaders/Loader";
 const Index = ({ auth, users }) => {
     let [isOpen, setIsOpen] = useState(false);
 
-    const { data, setData, post, processing, progress, errors, reset } =
+    const { data, setData, submit, processing, progress, errors, reset } =
         useForm({
+            id: null,
             name: "",
             email: "",
             password: import.meta.env.VITE_DEFAULT_PASSWORD,
@@ -36,9 +38,30 @@ const Index = ({ auth, users }) => {
         setIsOpen(true);
     };
 
+    const handleEditModal = async (id) => {
+        if (id) {
+            // Get
+            await axios
+                .get(route("api.users.edit", id))
+                .then(({ data }) => setModelData(data.data))
+                .catch((error) => console.log(error));
+
+            openModal();
+        }
+    };
+
+    const handleDeleteModal = (id) => {
+        console.log(id);
+        console.log("Delete Modal");
+    };
+
+    const setModelData = (items) => {
+        console.log(data);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route("users.store"), {
+        submit("post", route("users.store"), {
             preserveScroll: true,
             onSuccess: () => {
                 reset();
@@ -80,7 +103,11 @@ const Index = ({ auth, users }) => {
                             </div>
                         </div>
                         <div className="p-6 text-gray-900">
-                            <UserList users={users} />
+                            <UserList
+                                users={users}
+                                handleEditModal={handleEditModal}
+                                handleDeleteModal={handleDeleteModal}
+                            />
                         </div>
                     </div>
                 </div>
@@ -108,7 +135,6 @@ const Index = ({ auth, users }) => {
                                 />
                                 <TextInput
                                     id="name"
-                                    name="name"
                                     value={data.name}
                                     isFocused={true}
                                     onChange={(e) =>
@@ -131,7 +157,6 @@ const Index = ({ auth, users }) => {
                                 />
                                 <TextInput
                                     id="email"
-                                    name="email"
                                     type="email"
                                     value={data.email}
                                     onChange={(e) =>

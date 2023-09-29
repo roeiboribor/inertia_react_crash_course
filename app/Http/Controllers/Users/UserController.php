@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\StoreRequest as StoreUserRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
 
 class UserController extends Controller
 {
@@ -16,7 +18,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         return inertia('Users/Index', [
-            'users' => \App\Models\User::get(),
+            'users' => \App\Models\User::get()->toArray(),
         ]);
     }
 
