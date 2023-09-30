@@ -27,10 +27,11 @@ const Index = ({ auth }) => {
     const {
         data,
         setData,
-        setDefaults,
-        submit,
+        get,
+        post,
+        put,
+        delete: destroy,
         processing,
-        progress,
         errors,
         clearErrors,
         reset,
@@ -38,7 +39,6 @@ const Index = ({ auth }) => {
         id: "",
         name: "",
         email: "",
-        password: "",
     });
 
     const closeModal = () => {
@@ -47,7 +47,6 @@ const Index = ({ auth }) => {
     };
 
     const openModal = () => {
-        // resetModalForm();
         setIsOpen(true);
     };
 
@@ -56,28 +55,32 @@ const Index = ({ auth }) => {
         openModal();
     };
 
-    const handleEditModal = async (id) => {
+    const handleEditModal = async (id, type) => {
         if (id) {
-            setModalType("edit");
+            setModalType(type);
+
             await axios
                 .get(route("api.users.edit", id))
-                .then(({ data }) => setData({ ...data.data }))
+                .then(({ data }) => setData({ ...data.user }))
                 .catch((error) => console.log(error));
 
             openModal();
         }
     };
 
-    const handleDeleteModal = (id) => {
-        console.log(id);
-        console.log("Delete Modal");
+    const handleDeleteModal = async (id, type) => {
+        if (id) {
+            setModalType(type);
+            setData({ id: id });
+            openModal();
+        }
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         switch (modalType) {
             case "create":
-                submit("post", route("users.store"), {
+                post(route("users.store"), {
                     preserveScroll: true,
                     onSuccess: () => {
                         closeModal();
@@ -85,7 +88,15 @@ const Index = ({ auth }) => {
                 });
                 break;
             case "edit":
-                submit("post", route("users.update"), {
+                put(route("users.update", data.id), {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        closeModal();
+                    },
+                });
+                break;
+            case "delete":
+                destroy(route("users.destroy", data.id), {
                     preserveScroll: true,
                     onSuccess: () => {
                         closeModal();
@@ -101,9 +112,6 @@ const Index = ({ auth }) => {
     const resetModalForm = () => {
         clearErrors();
         reset();
-        setDefaults({
-            password: import.meta.env.VITE_DEFAULT_PASSWORD,
-        });
     };
 
     return (
@@ -123,6 +131,7 @@ const Index = ({ auth }) => {
                         <div className="card-header px-6 pt-4 pb-4 border-b">
                             <div className="flex items-end justify-between">
                                 <h4 className="text-lg font-bold">User List</h4>
+                                <div>Kineme</div>
                                 <div>
                                     <Button
                                         type="button"
@@ -159,7 +168,7 @@ const Index = ({ auth }) => {
                                 : modalType == "edit"
                                 ? "Edit"
                                 : modalType == "delete"
-                                ? "delete"
+                                ? "Delete"
                                 : null}{" "}
                             User
                         </h3>
@@ -171,54 +180,62 @@ const Index = ({ auth }) => {
                         </span>
                     </div>
                     <div className="card-body py-8">
-                        <div className="grid grid-cols-12 gap-4">
-                            <div className="col-span-12">
-                                <InputLabel
-                                    htmlFor="name"
-                                    value="Name"
-                                    required
-                                />
-                                <TextInput
-                                    id="name"
-                                    name="name"
-                                    value={data.name}
-                                    isFocused={true}
-                                    onChange={(e) =>
-                                        setData("name", e.target.value)
-                                    }
-                                    className="mt-1 block w-full"
-                                    required={true}
-                                    maxLength="255"
-                                />
-                                <InputError
-                                    message={errors.name}
-                                    className="mt-2"
-                                />
+                        {modalType === "delete" ? (
+                            <div>
+                                <p className="text-center">
+                                    Are you sure you want to delete this user?
+                                </p>
                             </div>
-                            <div className="col-span-12">
-                                <InputLabel
-                                    htmlFor="email"
-                                    value="Email"
-                                    required
-                                />
-                                <TextInput
-                                    id="email"
-                                    type="email"
-                                    name="email"
-                                    value={data.email}
-                                    onChange={(e) =>
-                                        setData("email", e.target.value)
-                                    }
-                                    className="mt-1 block w-full"
-                                    required={true}
-                                    maxLength="255"
-                                />
-                                <InputError
-                                    message={errors.email}
-                                    className="mt-2"
-                                />
+                        ) : (
+                            <div className="grid grid-cols-12 gap-4">
+                                <div className="col-span-12">
+                                    <InputLabel
+                                        htmlFor="name"
+                                        value="Name"
+                                        required
+                                    />
+                                    <TextInput
+                                        id="name"
+                                        name="name"
+                                        value={data.name}
+                                        isFocused={true}
+                                        onChange={(e) =>
+                                            setData("name", e.target.value)
+                                        }
+                                        className="mt-1 block w-full"
+                                        required={true}
+                                        maxLength="255"
+                                    />
+                                    <InputError
+                                        message={errors.name}
+                                        className="mt-2"
+                                    />
+                                </div>
+                                <div className="col-span-12">
+                                    <InputLabel
+                                        htmlFor="email"
+                                        value="Email"
+                                        required
+                                    />
+                                    <TextInput
+                                        id="email"
+                                        type="email"
+                                        name="email"
+                                        value={data.email}
+                                        onChange={(e) =>
+                                            setData("email", e.target.value)
+                                        }
+                                        className="mt-1 block w-full"
+                                        required={true}
+                                        maxLength="255"
+                                    />
+                                    <InputError
+                                        message={errors.email}
+                                        className="mt-2"
+                                    />
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                     <div className="card-footer">
                         <div className="flex items-center justify-between">
@@ -226,18 +243,28 @@ const Index = ({ auth }) => {
                                 <Loader isShow={processing} />
                             </div>
                             <div className="flex space-x-2">
-                                <Button
-                                    // disabled={
-                                    //     isEmpty(data.name) ||
-                                    //     isEmpty(data.email) ||
-                                    //     processing
-                                    // }
-                                    type="submit"
-                                    className="btn-success"
-                                    onClick={handleSubmit}
-                                >
-                                    Save
-                                </Button>
+                                {modalType === "delete" ? (
+                                    <Button
+                                        type="submit"
+                                        className="btn-danger"
+                                        onClick={handleSubmit}
+                                    >
+                                        Delete
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        disabled={
+                                            isEmpty(data.name) ||
+                                            isEmpty(data.email) ||
+                                            processing
+                                        }
+                                        type="submit"
+                                        className="btn-success"
+                                        onClick={handleSubmit}
+                                    >
+                                        Save
+                                    </Button>
+                                )}
                                 <Button
                                     type="button"
                                     className="btn-secondary"

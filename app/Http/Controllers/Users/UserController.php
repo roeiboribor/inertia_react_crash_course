@@ -41,10 +41,11 @@ class UserController extends Controller
             try {
                 \App\Models\User::create([
                     ...$validated,
-                    'password' => Hash::make($validated['password'])
+                    'password' => Hash::make(config('app.default_user_password'))
                 ]);
 
-                return to_route('users.index');
+                return to_route('users.index')
+                    ->withViewData(['success' => 'You have successfully added a user!']);
             } catch (\Throwable $th) {
                 Log::error($th);
                 return to_route('users.index');
@@ -71,16 +72,20 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(StoreUserRequest $request, User $user)
     {
-        //
+        $user->update($request->validated());
+
+        return to_route('users.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $user)
     {
-        //
+        $user->delete();
+
+        return to_route('users.index');
     }
 }

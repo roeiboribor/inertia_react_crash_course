@@ -6,10 +6,10 @@ const UserList = ({ users, handleEditModal, handleDeleteModal }) => {
 
         switch (type) {
             case "edit":
-                handleEditModal(id);
+                handleEditModal(id, type);
                 break;
             case "delete":
-                handleDeleteModal(id);
+                handleDeleteModal(id, type);
                 break;
 
             default:
@@ -24,25 +24,25 @@ const UserList = ({ users, handleEditModal, handleDeleteModal }) => {
                     {users.map((item, index) => (
                         <li
                             key={`list-item-${index}`}
-                            className="flex items-center space-x-2"
+                            className="flex items-center space-x-1"
                         >
                             <span>{item.name}</span>
                             <span>{item.email}</span>
                             <Button
                                 onClick={(e) => handleClick(e, item.id, "edit")}
                                 type="button"
-                                className="btn-primary"
+                                className="btn-primary py-1 px-2"
                             >
-                                Edit
+                                <i className="bx bx-edit"></i>
                             </Button>
                             <Button
                                 onClick={(e) =>
                                     handleClick(e, item.id, "delete")
                                 }
                                 type="button"
-                                className="btn-danger"
+                                className="btn-danger py-1 px-2"
                             >
-                                Delete
+                                <i className="bx bx-trash"></i>
                             </Button>
                         </li>
                     ))}

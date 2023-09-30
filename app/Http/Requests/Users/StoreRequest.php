@@ -24,8 +24,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'min:1', 'max:255'],
-            'email' => ['required', 'email', 'string', 'min:1', 'max:255', Rule::unique('users')],
-            'password' => ['required', 'min:1', 'max:255']
+            'email' => ['required', 'email', 'string', 'min:1', 'max:255', Rule::unique('users', 'email')->ignore($this->id)]
         ];
     }
 }

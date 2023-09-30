@@ -12,7 +12,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         return response()->json([
-            'data' => $user->only(['id', 'name', 'email'])
+            'user' => $user->only(['id', 'name', 'email'])
         ]);
     }
 }
