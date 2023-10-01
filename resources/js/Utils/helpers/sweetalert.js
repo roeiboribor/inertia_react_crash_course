@@ -5,7 +5,8 @@ export const sweetError = ({ text = 'Something went wrong!', footer = null }) =>
         icon: 'error',
         title: 'Oops...',
         html: text,
-        footer: footer
+        footer: footer,
+        timer: 1500
     })
 };
 
@@ -14,6 +15,7 @@ export const sweetSuccess = ({ text = 'Success!', footer = null }) => {
         icon: 'success',
         title: 'Yehey!',
         html: text,
-        footer: footer
+        footer: footer,
+        timer: 1500
     })
 };
