@@ -8,7 +8,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Inertia\Inertia;
 
 class UserController extends Controller
 {
@@ -18,7 +17,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         return inertia('Users/Index', [
-            'users' => \App\Models\User::get()->toArray(),
+            'users' => \App\Models\User::whereNot('id', auth()->user()->id)->get()->toArray(),
         ]);
     }
 
@@ -44,11 +43,11 @@ class UserController extends Controller
                     'password' => Hash::make(config('app.default_user_password'))
                 ]);
 
-                return to_route('users.index')
-                    ->withViewData(['success' => 'You have successfully added a user!']);
-            } catch (\Throwable $th) {
-                Log::error($th);
                 return to_route('users.index');
+            } catch (\Exception $err) {
+                $errorCode = 'Error Code:[' . uniqid(now() . ' - ') . ']';
+                Log::error($err->getMessage() . ' Creating User' . $errorCode);
+                return to_route('users.index')->withErrors(['message' => $errorCode]);
             }
         }
     }
@@ -74,9 +73,14 @@ class UserController extends Controller
      */
     public function update(StoreUserRequest $request, User $user)
     {
-        $user->update($request->validated());
-
-        return to_route('users.index');
+        try {
+            $user->update($request->validated());
+            return to_route('users.index');
+        } catch (\Exception $err) {
+            $errorCode = 'Error Code:[' . uniqid(now() . ' - ') . ']';
+            Log::error($err->getMessage() . ' Updating User' . $errorCode);
+            return to_route('users.index')->withErrors(['message' => $errorCode]);
+        }
     }
 
     /**
@@ -84,8 +88,13 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        $user->delete();
-
-        return to_route('users.index');
+        try {
+            $user->delete();
+            return to_route('users.index');
+        } catch (\Exception $err) {
+            $errorCode = 'Error Code:[' . uniqid(now() . ' - ') . ']';
+            Log::error($err->getMessage() . ' Deleting User' . $errorCode);
+            return to_route('users.index')->withErrors(['message' => $errorCode]);
+        }
     }
 }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { sweetError, sweetSuccess } from "@/Utils/helpers/sweetalert";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 import { usePage, useForm, Head } from "@inertiajs/react";
@@ -27,7 +28,6 @@ const Index = ({ auth }) => {
     const {
         data,
         setData,
-        get,
         post,
         put,
         delete: destroy,
@@ -84,6 +84,15 @@ const Index = ({ auth }) => {
                     preserveScroll: true,
                     onSuccess: () => {
                         closeModal();
+                        sweetSuccess({
+                            text: "You have successfully added a user",
+                        });
+                    },
+                    onError: (error) => {
+                        console.log(error.message);
+                        sweetError({
+                            text: `<p>Something went wrong! 😅</p><p class="text-sm mt-1">${error.message}</p>`,
+                        });
                     },
                 });
                 break;
@@ -92,6 +101,14 @@ const Index = ({ auth }) => {
                     preserveScroll: true,
                     onSuccess: () => {
                         closeModal();
+                        sweetSuccess({
+                            text: "You have successfully updated a user",
+                        });
+                    },
+                    onError: (errors) => {
+                        sweetError({
+                            text: `<p>Something went wrong! 😅</p><p class="text-sm mt-1">${error.message}</p>`,
+                        });
                     },
                 });
                 break;
@@ -100,6 +117,14 @@ const Index = ({ auth }) => {
                     preserveScroll: true,
                     onSuccess: () => {
                         closeModal();
+                        sweetSuccess({
+                            text: "You have successfully deleted a user ",
+                        });
+                    },
+                    onError: (errors) => {
+                        sweetError({
+                            text: `<p>Something went wrong! 😅</p><p class="text-sm mt-1">${error.message}</p>`,
+                        });
                     },
                 });
                 break;
@@ -131,7 +156,6 @@ const Index = ({ auth }) => {
                         <div className="card-header px-6 pt-4 pb-4 border-b">
                             <div className="flex items-end justify-between">
                                 <h4 className="text-lg font-bold">User List</h4>
-                                <div>Kineme</div>
                                 <div>
                                     <Button
                                         type="button"
