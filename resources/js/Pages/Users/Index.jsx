@@ -8,7 +8,6 @@ import { useForm, Head } from "@inertiajs/react";
 import Button from "@/Components/ui/buttons/Button";
 
 // CUSTOM COMPONENTS
-import UserList from "./UserList";
 import UserModal from "./UserModal";
 import UsersTable from "./UsersTable";
 
@@ -100,11 +99,6 @@ const Index = ({ auth }) => {
                             </div>
                         </div>
                         <div className="p-6 text-gray-900">
-                            {/* <UserList
-                                users={users}
-                                handleEditModal={handleEditModal}
-                                handleDeleteModal={handleDeleteModal}
-                            /> */}
                             <UsersTable
                                 handleEditModal={handleEditModal}
                                 handleDeleteModal={handleDeleteModal}
