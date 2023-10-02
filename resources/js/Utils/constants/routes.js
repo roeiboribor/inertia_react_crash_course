@@ -2,6 +2,7 @@
 export const routes = [
     { name: 'Dashboard', value: 'dashboard', link: '/dashboard' },
     { name: 'Users', value: 'users.index', link: '/users' },
+    { name: 'Zustand', value: 'zustand.index', link: '/zustand' },
 ];
 
 export default {

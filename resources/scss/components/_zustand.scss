@@ -1,0 +1,29 @@
+@layer components {
+    .column {
+        @apply bg-white overflow-hidden shadow-sm sm:rounded-lg min-h-[20rem] w-[33%] p-2 space-y-1;
+    }
+
+    .task {
+        @apply bg-blue-200 p-2 rounded flex flex-col justify-between min-h-[5rem];
+    }
+
+    .bottom-wrapper {
+        @apply flex justify-between;
+    }
+
+    .status {
+        @apply text-xs bg-gray-100 p-1 rounded;
+
+        &.planned {
+            @apply bg-orange-400;
+        }
+
+        &.ongoing {
+            @apply bg-purple-400;
+        }
+
+        &.done {
+            @apply bg-green-400;
+        }
+    }
+}

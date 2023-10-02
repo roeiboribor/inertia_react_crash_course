@@ -22,6 +22,7 @@
     },
     "dependencies": {
         "react-data-table-component": "^7.5.4",
-        "sweetalert2": "^11.7.31"
+        "sweetalert2": "^11.7.31",
+        "zustand": "^4.4.1"
     }
 }
