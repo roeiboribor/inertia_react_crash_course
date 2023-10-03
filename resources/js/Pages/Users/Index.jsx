@@ -2,20 +2,18 @@ import { useState } from "react";
 import axios from "axios";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
-import { usePage, useForm, Head } from "@inertiajs/react";
+import { useForm, Head } from "@inertiajs/react";
 
 // UI COMPONENTS
 import Button from "@/Components/ui/buttons/Button";
 
 // CUSTOM COMPONENTS
-import UserList from "./UserList";
 import UserModal from "./UserModal";
+import UsersTable from "./UsersTable";
 
 const Index = ({ auth }) => {
     let [isOpen, setIsOpen] = useState(false);
     let [modalType, setModalType] = useState("");
-
-    const { users } = usePage().props;
 
     const {
         data,
@@ -101,8 +99,7 @@ const Index = ({ auth }) => {
                             </div>
                         </div>
                         <div className="p-6 text-gray-900">
-                            <UserList
-                                users={users}
+                            <UsersTable
                                 handleEditModal={handleEditModal}
                                 handleDeleteModal={handleDeleteModal}
                             />

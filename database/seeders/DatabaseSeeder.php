@@ -17,6 +17,6 @@ class DatabaseSeeder extends Seeder
             'email' => 'roeiboribor.metacombpo@gmail.com',
         ]);
 
-        \App\Models\User::factory(10)->create();
+        \App\Models\User::factory(100)->create();
     }
 }

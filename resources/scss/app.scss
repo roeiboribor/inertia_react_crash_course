@@ -5,3 +5,15 @@
 // Components
 @import "components/reboot";
 @import "components/buttons";
+
+nav.rdt_Pagination>div:nth-of-type(1) {
+    @apply rounded border border-gray-200;
+
+    &>select {
+        @apply px-4 py-0.5 bg-none active:border-none focus:border-none focus:ring-0;
+    }
+
+    &>svg {
+        @apply hidden;
+    }
+}
