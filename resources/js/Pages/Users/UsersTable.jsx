@@ -1,9 +1,16 @@
 import Button from "@/Components/ui/buttons/Button";
+import SearchFilter from "@/Components/ui/datatable/SearchFilter";
+
 import { usePage } from "@inertiajs/react";
+import { useMemo, useState } from "react";
+
 import DataTable from "react-data-table-component";
 
 const UsersTable = ({ handleEditModal, handleDeleteModal }) => {
     const { users } = usePage().props;
+
+    const [filterText, setFilterText] = useState("");
+    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
 
     const handleClick = (e, id, type) => {
         e.preventDefault();
@@ -60,11 +67,42 @@ const UsersTable = ({ handleEditModal, handleDeleteModal }) => {
         selectAllRowsItem: true,
     };
 
+    const filteredItems = users.filter(
+        (item) =>
+            JSON.stringify(item)
+                .toLowerCase()
+                .indexOf(filterText.toLowerCase()) !== -1
+    );
+
+    const subHeaderComponent = useMemo(() => {
+        const handleClear = () => {
+            if (filterText) {
+                setResetPaginationToggle(!resetPaginationToggle);
+                setFilterText("");
+            }
+        };
+
+        return (
+            <div className="absolute w-full flex items-end justify-between px-4">
+                <SearchFilter
+                    onFilter={(e) => setFilterText(e.target.value)}
+                    onClear={handleClear}
+                    filterText={filterText}
+                />
+                <div>Kineme</div>
+            </div>
+        );
+    }, [filterText, resetPaginationToggle]);
+
     return (
         <DataTable
             columns={columns}
-            data={users}
+            data={filteredItems}
             pagination
+            striped
+            subHeader
+            subHeaderAlign="center"
+            subHeaderComponent={subHeaderComponent}
             paginationRowsPerPageOptions={[10, 25, 50]}
             paginationComponentOptions={paginationComponentOptions}
         />
