@@ -91,7 +91,7 @@ const UsersTable = ({ handleEditModal, handleDeleteModal }) => {
         };
 
         return (
-            <div className="absolute w-full flex items-end justify-between px-4">
+            <div className="w-full flex items-end justify-between">
                 <SearchFilter
                     onFilter={(e) => setFilterText(e.target.value)}
                     onClear={handleClear}
@@ -103,23 +103,26 @@ const UsersTable = ({ handleEditModal, handleDeleteModal }) => {
     }, [filterText, resetPaginationToggle]);
 
     return (
-        <DataTable
-            columns={columns}
-            data={filteredItems}
-            pagination
-            striped
-            selectableRows
-            onSelectedRowsChange={handleChange}
-            dense
-            subHeader
-            highlightOnHover
-            pointerOnHove
-            subHeaderAlign="center"
-            actions={`button add here`}
-            subHeaderComponent={subHeaderComponent}
-            paginationRowsPerPageOptions={[10, 25, 50]}
-            paginationComponentOptions={paginationComponentOptions}
-        />
+        <>
+            <div>Kineme</div>
+            <DataTable
+                columns={columns}
+                data={filteredItems}
+                pagination
+                striped
+                selectableRows
+                onSelectedRowsChange={handleChange}
+                dense
+                subHeader
+                highlightOnHover
+                pointerOnHover
+                subHeaderAlign="center"
+                actions
+                subHeaderComponent={subHeaderComponent}
+                paginationRowsPerPageOptions={[10, 25, 50]}
+                paginationComponentOptions={paginationComponentOptions}
+            />
+        </>
     );
 };
 
