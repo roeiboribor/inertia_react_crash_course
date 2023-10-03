@@ -2,12 +2,20 @@ import Button from "@/Components/ui/buttons/Button";
 import SearchFilter from "@/Components/ui/datatable/SearchFilter";
 
 import { usePage } from "@inertiajs/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import DataTable from "react-data-table-component";
 
 const UsersTable = ({ handleEditModal, handleDeleteModal }) => {
     const { users } = usePage().props;
+
+    useEffect(() => {
+        console.log(users);
+    }, []);
+
+    const handleChange = ({ selectedRows }) => {
+        console.log("Selected Rows: ", selectedRows);
+    };
 
     const [filterText, setFilterText] = useState("");
     const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
@@ -100,8 +108,14 @@ const UsersTable = ({ handleEditModal, handleDeleteModal }) => {
             data={filteredItems}
             pagination
             striped
+            selectableRows
+            onSelectedRowsChange={handleChange}
+            dense
             subHeader
+            highlightOnHover
+            pointerOnHove
             subHeaderAlign="center"
+            actions={`button add here`}
             subHeaderComponent={subHeaderComponent}
             paginationRowsPerPageOptions={[10, 25, 50]}
             paginationComponentOptions={paginationComponentOptions}
